@@ -1,0 +1,60 @@
+using Random
+
+function process_matrix(wiersz::Int, kolumna::Int,przedzial::Int)
+
+    droga = rand(1:przedzial, wiersz, kolumna)
+    display(droga)
+
+
+    for x in range(start=wiersz, stop=2, step=-1)
+        droga[x-1, 1] += droga[x, 2]
+        droga[x-1, kolumna] += droga[x, kolumna-1]
+        for y in range(start=2, stop=kolumna-1, step=1)
+            if droga[x, y-1] < droga[x, y+1]
+                droga[x-1, y] += droga[x, y-1]
+            else
+                droga[x-1, y] += droga[x, y+1]
+            end
+        end
+    end
+
+
+    dro = minimum(droga[1, :])
+    index = -1  
+    for kurka in range(start=1, stop=kolumna, step=1)
+        if droga[1, kurka] == dro
+            index = kurka
+            break  
+        end
+    end
+
+
+
+    kol = index
+    opti = zeros(Int32, (wiersz, kolumna))
+    opti[1, kol] = dro
+
+    for uwu in range(start=1, stop=wiersz-1, step=1)
+        if kol == 1
+            opti[uwu+1, kol+1] = droga[uwu+1, kol+1]
+            kol += 1
+        elseif kol == kolumna
+            opti[uwu+1, kol-1] = droga[uwu+1, kol-1]
+            kol -= 1
+        elseif droga[uwu+1, kol-1] > droga[uwu+1, kol+1]
+            opti[uwu+1, kol+1] = droga[uwu+1, kol+1]
+            kol += 1
+        else
+            opti[uwu+1, kol-1] = droga[uwu+1, kol-1]
+            kol -= 1
+        end
+    end
+
+
+    display(droga)
+    display(opti)
+    println("Najkrótsza droga: ", sum(opti[1, :]))
+end
+
+
+process_matrix(10, 10,100)
